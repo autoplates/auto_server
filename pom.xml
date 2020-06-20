@@ -11,8 +11,8 @@
     <groupId>org.auto</groupId>
     <artifactId>plate</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>jar</packaging>
-    <name>plate</name>
+    <packaging>war</packaging>
+    <name>auto_server</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>
