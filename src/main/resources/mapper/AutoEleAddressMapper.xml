@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.auto.plate.mapper.AutoEleAddressMapper">
+    <resultMap id="AutoEleAddressMap" type="org.auto.plate.entity.AutoEleAddress">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="addressType" column="addressType" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- 获取事件列表-->
+    <select id="getAutoEleAddressList" resultMap="AutoEleAddressMap">
+        select * from auto_ele_address
+    </select>
+</mapper>

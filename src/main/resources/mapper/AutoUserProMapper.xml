@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.auto.plate.mapper.AutoUserProMapper">
+
+    <resultMap type="org.auto.plate.entity.AutoUserPro" id="AutoUserProMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="uid" column="uid" jdbcType="INTEGER"/>
+        <result property="projectid" column="projectid" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--根据projectid删除数据-->
+    <delete id="deleteByProjectId">
+        delete from auto.auto_user_pro where projectid = #{projectId}
+    </delete>
+    <!--给项目添加组员-->
+    <insert id="addProjectUser">
+        insert into auto.auto_user_pro(uid, projectid)
+        values (#{userId}, #{projectId})
+    </insert>
+
+    <select id="selectObject" resultMap="AutoUserProMap">
+        select * from auto_user_pro where uid = #{userId} and projectid = #{projectId}
+    </select>
+    <!--查询单个-->
+    <select id="queryById" resultMap="AutoUserProMap">
+        select
+          id, uid, projectid
+        from auto.auto_user_pro
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="AutoUserProMap">
+        select
+          id, uid, projectid
+        from auto.auto_user_pro
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="AutoUserProMap">
+        select
+          id, uid, projectid
+        from auto.auto_user_pro
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="uid != null">
+                and uid = #{uid}
+            </if>
+            <if test="projectid != null">
+                and projectid = #{projectid}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into auto.auto_user_pro(uid, projectid)
+        values (#{uid}, #{projectid})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update auto.auto_user_pro
+        <set>
+            <if test="uid != null">
+                uid = #{uid},
+            </if>
+            <if test="projectid != null">
+                projectid = #{projectid},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from auto.auto_user_pro where id = #{id}
+    </delete>
+
+</mapper>

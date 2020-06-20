@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.auto.plate.mapper.AutoCaseMapper">
+
+    <resultMap type="org.auto.plate.entity.AutoCase" id="AutoCaseMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="casename" column="casename" jdbcType="VARCHAR"/>
+        <result property="casedescription" column="casedescription" jdbcType="VARCHAR"/>
+        <result property="createtime" column="createtime" jdbcType="TIMESTAMP"/>
+        <result property="updatetime" column="updatetime" jdbcType="TIMESTAMP"/>
+        <result property="executetime" column="executetime" jdbcType="TIMESTAMP"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="proid" column="proId" jdbcType="INTEGER"/>
+        <result property="proname" column="proname" jdbcType="VARCHAR"/>
+        <result property="elelist" column="eleList" jdbcType="VARCHAR"/>
+        <result property="paramslist" column="paramsList" jdbcType="VARCHAR"/>
+        <result property="pretemplate" column="pretemplate" jdbcType="VARCHAR"/>
+        <result property="posttemplate" column="posttemplate" jdbcType="VARCHAR"/>
+        <result property="executelog" column="executelog" jdbcType="LONGVARCHAR"/>
+        <result property="type" column="type" jdbcType="INTEGER" />
+    </resultMap>
+
+    <select id="selectAllAutoCaseByUser" resultMap="AutoCaseMap">
+        select * from auto_case where proId in (select projectid from auto_user_pro where uid = #{userId})
+        and type = #{type} and casename like concat('%','${query}','%')
+        limit #{firstNum}, #{pageSize}
+    </select>
+
+    <select id="selectAllAutoCaseByProject" resultMap="AutoCaseMap">
+        select * from auto_case where proId = #{projectId} and type = #{type}
+        and casename like concat('%','${query}','%')
+        limit #{firstNum}, #{pageSize}
+    </select>
+
+    <select id="queryAllCaseCountByProject" resultType="java.lang.Integer">
+        select count(*) from auto_case where proId = #{projectId} and type = #{type}
+    </select>
+
+    <select id="selectAllByProId" resultMap="AutoCaseMap">
+        select * from auto_case where proId = #{projectId} and type = #{type}
+    </select>
+
+    <select id="selectAutoCaseByCreateDate" resultMap="AutoCaseMap">
+        select * from auto_case where createtime = #{date}
+    </select>
+
+    <select id="selectAllAutoCaseByProId">
+        select count(*) from auto_case where proId = #{projectId}
+    </select>
+
+    <select id="queryAllCase" resultMap="AutoCaseMap">
+        select * from auto_case where casename like concat('%','${query}','%')
+        and proId in (select projectid from auto_user_pro where uid = #{userId})
+        and type = #{type}
+    </select>
+
+    <delete id="deleteByIdList"  parameterType = "java.util.List">
+        delete from user where id in
+        <foreach collection="list"  item="item" open="(" separator="," close=")"  >
+            #{autoCaseIdList}
+        </foreach>
+    </delete>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="AutoCaseMap">
+        select
+          id, casename, casedescription, createtime, updatetime, executetime, status, proId, proname,
+          eleList, paramsList, pretemplate, posttemplate, executelog
+        from auto.auto_case
+        where id = #{id}
+    </select>
+
+    <select id="selectCaseCount" resultType="java.lang.Integer">
+        select count(*)  from auto.auto_case where proId = #{projectId} and type = #{type}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="AutoCaseMap">
+        select
+          id, casename, casedescription, createtime, updatetime, executetime, status, proId, proname, eleList, paramsList
+        from auto.auto_case
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="AutoCaseMap">
+        select
+          id, casename, casedescription, createtime, updatetime, executetime, status, proId, proname, eleList, paramsList
+        from auto.auto_case
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="casename != null and casename != ''">
+                and casename = #{casename}
+            </if>
+            <if test="casedescription != null and casedescription != ''">
+                and casedescription = #{casedescription}
+            </if>
+            <if test="createtime != null">
+                and createtime = #{createtime}
+            </if>
+            <if test="updatetime != null">
+                and updatetime = #{updatetime}
+            </if>
+            <if test="executetime != null and executetime != ''">
+                and executetime = #{executetime}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="proid != null">
+                and proId = #{proid}
+            </if>
+            <if test="proname != null and proname != ''">
+                and proname = #{proname}
+            </if>
+            <if test="elelist != null and elelist != ''">
+                and eleList = #{elelist}
+            </if>
+            <if test="paramslist != null and paramslist != ''">
+                and paramsList = #{paramslist},
+            </if>
+            <if test="type != null and type != ''">
+                and type = #{type}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into auto.auto_case(casename, casedescription, createtime, updatetime, executetime, status, proId, proname,
+        eleList, paramsList, pretemplate, posttemplate, executelog, type)
+        values (#{casename}, #{casedescription}, #{createtime}, #{updatetime}, #{executetime}, #{status}, #{proid}, #{proname},
+        #{elelist}, #{paramslist}, #{pretemplate}, #{posttemplate}, #{executelog}, #{type})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update auto.auto_case
+        <set>
+            <if test="casename != null and casename != ''">
+                casename = #{casename},
+            </if>
+            <if test="casedescription != null and casedescription != ''">
+                casedescription = #{casedescription},
+            </if>
+            <if test="createtime != null">
+                createtime = #{createtime},
+            </if>
+            <if test="updatetime != null">
+                updatetime = #{updatetime},
+            </if>
+            <if test="executetime != null">
+                executetime = #{executetime},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="proid != null">
+                proId = #{proid},
+            </if>
+            <if test="proname != null and proname != ''">
+                proname = #{proname},
+            </if>
+            <if test="elelist != null and elelist != ''">
+                eleList = #{elelist},
+            </if>
+            <if test="paramslist != null and paramslist != ''">
+                paramsList = #{paramslist},
+            </if>
+            <if test="pretemplate != null and pretemplate != ''">
+                pretemplate = #{pretemplate},
+            </if>
+            <if test="posttemplate != null and posttemplate != ''">
+                posttemplate = #{posttemplate},
+            </if>
+            <if test="executelog != null and executelog != ''">
+                executelog = #{executelog},
+            </if>
+            <if test="type != null and type != ''">
+                and type = #{type}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from auto.auto_case where id = #{id}
+    </delete>
+
+</mapper>

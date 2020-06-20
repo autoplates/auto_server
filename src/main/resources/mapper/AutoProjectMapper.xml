@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.auto.plate.mapper.AutoProjectMapper">
+
+    <resultMap type="org.auto.plate.entity.AutoProject" id="AutoProjectMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="uid" column="uid" jdbcType="INTEGER"/>
+        <result property="projectname" column="projectname" jdbcType="VARCHAR"/>
+        <result property="projecttype" column="projectType" jdbcType="INTEGER"/>
+        <result property="projectdescription" column="projectdescription" jdbcType="VARCHAR"/>
+        <result property="projectaddress" column="projectaddress" jdbcType="VARCHAR"/>
+        <result property="projectcreatedate" column="projectcreatedate" jdbcType="TIMESTAMP"/>
+        <result property="projectcreateuser" column="projectCreateUser" jdbcType="VARCHAR"/>
+        <result property="projectupdatedate" column="projectupdatedate" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <resultMap id="AutoProName" type="java.lang.String">
+        <result property="projectname" column="projectname" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="selectAllProjectListByUser" resultMap="AutoProjectMap">
+        select * from auto_project where id in (select auto_user_pro.projectId from auto_user_pro where auto_user_pro.uid = #{userId})
+    </select>
+
+    <!--查询所得测试项目-->
+    <select id="selectAllProjectList" resultMap="AutoProjectMap">
+        select
+          id, uid, projectname, projectType, projectdescription, projectaddress, projectcreatedate, projectCreateUser, projectupdatedate
+        from auto.auto_project where id IN (SELECT projectid FROM auto_user_pro WHERE uid = #{userId}) and projectType = #{projectType}
+        and projectname like concat('%','${query}','%')
+        limit #{firstNum}, #{pageSize}
+    </select>
+    <!--查询单个-->
+    <select id="queryById" resultMap="AutoProjectMap">
+        select
+          id, uid, projectname, projectType, projectdescription, projectaddress, projectcreatedate, projectCreateUser, projectupdatedate
+        from auto.auto_project
+        where id = #{id}
+    </select>
+
+    <select id="getProjectNameList" resultMap="AutoProName">
+        select projectname from auto.auto_project where id in (select projectid from auto.auto_user_pro where uid = #{userId})
+    </select>
+
+    <select id="findUserProList" resultMap="AutoProjectMap">
+        select * from auto.auto_project where id in (select projectid from auto.auto_user_pro where uid = #{userId})
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="AutoProjectMap">
+        select
+          id, uid, projectname, projectType, projectdescription, projectaddress, projectcreatedate, projectCreateUser, projectupdatedate
+        from auto.auto_project where projectType = #{projectType}
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="AutoProjectMap">
+        select
+          id, uid, projectname, projectType, projectdescription, projectaddress, projectcreatedate, projectCreateUser, projectupdatedate
+        from auto.auto_project
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="uid != null">
+                and uid = #{uid}
+            </if>
+            <if test="projectname != null and projectname != ''">
+                and projectname = #{projectname}
+            </if>
+            <if test="projecttype != null">
+                and projectType = #{projecttype}
+            </if>
+            <if test="projectdescription != null and projectdescription != ''">
+                and projectdescription = #{projectdescription}
+            </if>
+            <if test="projectaddress != null and projectaddress != ''">
+                and projectaddress = #{projectaddress}
+            </if>
+            <if test="projectcreatedate != null">
+                and projectcreatedate = #{projectcreatedate}
+            </if>
+            <if test="projectcreateuser != null and projectcreateuser != ''">
+                and projectCreateUser = #{projectcreateuser}
+            </if>
+            <if test="projectupdatedate != null">
+                and projectupdatedate = #{projectupdatedate}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into auto.auto_project(uid, projectname, projectType, projectdescription, projectaddress, projectcreatedate, projectCreateUser, projectupdatedate)
+        values (#{uid}, #{projectname}, #{projecttype}, #{projectdescription}, #{projectaddress}, #{projectcreatedate}, #{projectcreateuser}, #{projectupdatedate})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update auto.auto_project
+        <set>
+            <if test="uid != null">
+                uid = #{uid},
+            </if>
+            <if test="projectname != null and projectname != ''">
+                projectname = #{projectname},
+            </if>
+            <if test="projecttype != null">
+                projectType = #{projecttype},
+            </if>
+            <if test="projectdescription != null and projectdescription != ''">
+                projectdescription = #{projectdescription},
+            </if>
+            <if test="projectaddress != null and projectaddress != ''">
+                projectaddress = #{projectaddress},
+            </if>
+            <if test="projectcreatedate != null">
+                projectcreatedate = #{projectcreatedate},
+            </if>
+            <if test="projectcreateuser != null and projectcreateuser != ''">
+                projectCreateUser = #{projectcreateuser},
+            </if>
+            <if test="projectupdatedate != null">
+                projectupdatedate = #{projectupdatedate},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from auto.auto_project where id = #{id}
+    </delete>
+
+</mapper>

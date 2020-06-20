@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.auto.plate.mapper.AutoCronMapper">
+
+    <resultMap type="org.auto.plate.entity.AutoCron" id="AutoCronMap">
+        <result property="cron_id" column="cron_id" jdbcType="INTEGER"/>
+        <result property="cron" column="cron" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="getCron" resultType="java.lang.String">
+        select cron from auto_cron limit 1
+    </select>
+
+</mapper>

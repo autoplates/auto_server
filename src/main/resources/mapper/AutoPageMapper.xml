@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.auto.plate.mapper.AutoPageMapper">
+
+    <resultMap type="org.auto.plate.entity.AutoPage" id="AutoPageMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="pagename" column="pagename" jdbcType="VARCHAR"/>
+        <result property="pagedesc" column="pagedesc" jdbcType="VARCHAR"/>
+        <result property="elecount" column="elecount" jdbcType="INTEGER"/>
+        <result property="createby" column="createby" jdbcType="VARCHAR"/>
+        <result property="createdate" column="createdate" jdbcType="TIMESTAMP"/>
+        <result property="projectid" column="projectId" jdbcType="INTEGER"/>
+        <result property="projectname" column="projectname" jdbcType="VARCHAR"/>
+        <result property="userId" column="userId" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--获取所有的page数据-->
+    <select id="selectAllPageList" resultMap="AutoPageMap" parameterType="java.util.List">
+        select *
+        from auto.auto_page where projectId in
+            (select projectid from auto.auto_user_pro where uid = #{userId})
+        and pagename like concat('%','${query}','%')
+        limit #{firstNum}, #{pageSize}
+    </select>
+    <!--根据proid获取page列表-->
+    <select id="getPageListByProId" resultMap="AutoPageMap">
+        select * from auto_page where projectid = #{projectId}
+    </select>
+
+    <!--根据projectid查询page-->
+    <select id="queryByProjectId" resultMap="AutoPageMap">
+        select * from auto_page where projectId = #{projectId} limit 1,1
+    </select>
+    <!--查询单个-->
+    <select id="queryById" resultMap="AutoPageMap">
+        select
+          id, pagename, pagedesc, elecount, createby, createdate, projectId, projectname, userId
+        from auto.auto_page
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="AutoPageMap">
+        select
+          id, pagename, pagedesc, elecount, createby, createdate, projectId, projectname, userId
+        from auto.auto_page
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="AutoPageMap">
+        select
+          id, pagename, pagedesc, elecount, createby, createdate, projectId, projectname
+        from auto.auto_page
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="pagename != null and pagename != ''">
+                and pagename = #{pagename}
+            </if>
+            <if test="pagedesc != null and pagedesc != ''">
+                and pagedesc = #{pagedesc}
+            </if>
+            <if test="elecount != null">
+                and elecount = #{elecount}
+            </if>
+            <if test="createby != null and createby != ''">
+                and createby = #{createby}
+            </if>
+            <if test="createdate != null">
+                and createdate = #{createdate}
+            </if>
+            <if test="projectid != null">
+                and projectId = #{projectid}
+            </if>
+            <if test="projectname != null and projectname != ''">
+                and projectname = #{projectname}
+            </if>
+            <if test="userId != null">
+                and userId = #{userId}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into auto.auto_page(pagename, pagedesc, elecount, createby, createdate, projectId, projectname, userId)
+        values (#{pagename}, #{pagedesc}, #{elecount}, #{createby}, #{createdate}, #{projectid}, #{projectname}, #{userId})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update auto.auto_page
+        <set>
+            <if test="pagename != null and pagename != ''">
+                pagename = #{pagename},
+            </if>
+            <if test="pagedesc != null and pagedesc != ''">
+                pagedesc = #{pagedesc},
+            </if>
+            <if test="elecount != null">
+                elecount = #{elecount},
+            </if>
+            <if test="createby != null and createby != ''">
+                createby = #{createby},
+            </if>
+            <if test="createdate != null">
+                createdate = #{createdate},
+            </if>
+            <if test="projectid != null">
+                projectId = #{projectid},
+            </if>
+            <if test="projectname != null and projectname != ''">
+                projectname = #{projectname},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from auto.auto_page where id = #{id}
+    </delete>
+
+</mapper>

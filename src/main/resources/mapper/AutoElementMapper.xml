@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.auto.plate.mapper.AutoElementMapper">
+
+    <resultMap type="org.auto.plate.entity.AutoElement" id="AutoElementMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="elename" column="elename" jdbcType="VARCHAR"/>
+        <result property="eleeventname" column="eleEventName" jdbcType="VARCHAR"/>
+        <result property="elelocaltype" column="elelocaltype" jdbcType="VARCHAR"/>
+        <result property="eleaddress" column="eleaddress" jdbcType="VARCHAR"/>
+        <result property="createdate" column="createdate" jdbcType="TIMESTAMP"/>
+        <result property="updatedate" column="updatedate" jdbcType="TIMESTAMP"/>
+        <result property="pageid" column="pageId" jdbcType="INTEGER"/>
+        <result property="createby" column="createby" jdbcType="VARCHAR"/>
+        <result property="lastupdateby" column="lastupdateby" jdbcType="VARCHAR"/>
+        <result property="pagename" column="pagename" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!--根据pageid 获取元素-->
+    <select id="queryByPageId" resultMap="AutoElementMap">
+        select * from auto_element where pageId = #{pageId} limit 0,1
+    </select>
+
+    <select id="selectElementByPageId" resultMap="AutoElementMap">
+        select * from auto_element where pageId = #{pageId}
+    </select>
+
+    <!--根据peojectId获取该项目下所有的element-->
+    <select id="findElementListByProId" resultMap="AutoElementMap">
+        select * from auto_element where pageId in (select id from auto_page where projectId = #{projectId})
+        and elename like concat('%','${query}','%')
+        limit #{firstNum}, #{pageSize}
+    </select>
+
+    <!--获取元素列表-->
+    <select id="selectAllElementByPageId" resultMap="AutoElementMap">
+        select * from auto_element where pageid = #{pageId} and elename like concat('%','${query}','%')
+        limit #{firstNum}, #{pageSize}
+    </select>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="AutoElementMap">
+        select
+          id, elename, eleEventName, elelocaltype, eleaddress, createdate, updatedate, pageId, createby, lastupdateby, pagename
+        from auto.auto_element
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="AutoElementMap">
+        select
+          id, elename, eleEventName, elelocaltype, eleaddress, createdate, updatedate, pageId, createby, lastupdateby
+        from auto.auto_element
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="AutoElementMap">
+        select
+          id, elename, eleEventName, elelocaltype, eleaddress, createdate, updatedate, pageId, createby, lastupdateby
+        from auto.auto_element
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="elename != null and elename != ''">
+                and elename = #{elename}
+            </if>
+            <if test="eleeventname != null and eleeventname != ''">
+                and eleEventName = #{eleeventname}
+            </if>
+            <if test="elelocaltype != null and elelocaltype != ''">
+                and elelocaltype = #{elelocaltype}
+            </if>
+            <if test="eleaddress != null and eleaddress != ''">
+                and eleaddress = #{eleaddress}
+            </if>
+            <if test="createdate != null">
+                and createdate = #{createdate}
+            </if>
+            <if test="updatedate != null">
+                and updatedate = #{updatedate}
+            </if>
+            <if test="pageid != null">
+                and pageId = #{pageid}
+            </if>
+            <if test="createby != null and createby != ''">
+                and createby = #{createby}
+            </if>
+            <if test="lastupdateby != null and lastupdateby != ''">
+                and lastupdateby = #{lastupdateby}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into auto.auto_element(elename, eleEventName, elelocaltype, eleaddress, createdate, pageId, createby, pagename)
+        values (#{elename}, #{eleeventname}, #{elelocaltype}, #{eleaddress}, #{createdate}, #{pageid}, #{createby}, #{pagename})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update auto.auto_element
+        <set>
+            <if test="elename != null and elename != ''">
+                elename = #{elename},
+            </if>
+            <if test="eleeventname != null and eleeventname != ''">
+                eleEventName = #{eleeventname},
+            </if>
+            <if test="elelocaltype != null and elelocaltype != ''">
+                elelocaltype = #{elelocaltype},
+            </if>
+            <if test="eleaddress != null and eleaddress != ''">
+                eleaddress = #{eleaddress},
+            </if>
+            <if test="createdate != null">
+                createdate = #{createdate},
+            </if>
+            <if test="updatedate != null">
+                updatedate = #{updatedate},
+            </if>
+            <if test="pageid != null">
+                pageId = #{pageid},
+            </if>
+            <if test="createby != null and createby != ''">
+                createby = #{createby},
+            </if>
+            <if test="lastupdateby != null and lastupdateby != ''">
+                lastupdateby = #{lastupdateby},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from auto.auto_element where id = #{id}
+    </delete>
+
+</mapper>

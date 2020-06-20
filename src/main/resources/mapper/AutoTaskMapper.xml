@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.auto.plate.mapper.AutoTaskMapper">
+
+    <resultMap type="org.auto.plate.entity.AutoTask" id="AutoTaskMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="taskname" column="taskname" jdbcType="VARCHAR"/>
+        <result property="taskdescription" column="taskdescription" jdbcType="VARCHAR"/>
+        <result property="taskcreatetime" column="taskcreatetime" jdbcType="TIMESTAMP"/>
+        <result property="taskupdatetime" column="taskupdatetime" jdbcType="TIMESTAMP"/>
+        <result property="executetime" column="executetime" jdbcType="TIMESTAMP"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="caseList" column="caseList" jdbcType="VARCHAR"/>
+        <result property="proid" column="proid" jdbcType="INTEGER"/>
+        <result property="proname" column="proname" jdbcType="VARCHAR"/>
+        <result property="isScheduled" column="isScheduled" jdbcType="INTEGER"/>
+        <result property="success" column="success" jdbcType="INTEGER"/>
+        <result property="fail" column="fail" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <select id="selectAllTaskList" resultMap="AutoTaskMap" parameterType="java.util.List">
+        SELECT * FROM auto_task WHERE proid IN
+            (SELECT projectid FROM auto_user_pro WHERE uid = #{userId})
+        and taskname like concat('%','${query}','%')
+        limit #{firstNum}, #{pageSize}
+    </select>
+
+    <select id="findTaskList" resultMap="AutoTaskMap">
+        SELECT * FROM auto_task WHERE proid IN
+            (SELECT projectid FROM auto_user_pro WHERE uid = #{userId})
+    </select>
+
+    <select id="selectTaskById" resultMap="AutoTaskMap">
+        select * from auto_task where id = #{taskId}
+    </select>
+    <!-- 获取tasklist 的数值-->
+    <select id="getAllTaskCount" resultType="java.lang.Integer">
+        SELECT count(*) FROM auto_task WHERE proid IN
+            (SELECT projectid FROM auto_user_pro WHERE uid = #{userId})
+    </select>
+
+     <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into auto.auto_task(taskname, taskdescription, taskcreatetime, taskupdatetime, executetime, status, caseList, proid,
+        proname, isScheduled, success, fail)
+        values (#{taskname}, #{taskdescription}, #{taskcreatetime}, #{taskupdatetime}, #{executetime}, #{status}, #{caseList}, #{proid},
+        #{proname}, #{isScheduled}, #{success}, #{fail})
+    </insert>
+
+    <select id="selectTaskList" resultMap="AutoTaskMap">
+        select * from auto_task
+    </select>
+    <!--通过主键修改数据-->
+    <update id="update">
+        update auto.auto_task
+        <set>
+            <if test="taskname != null and taskname != ''">
+                taskname = #{taskname},
+            </if>
+            <if test="taskdescription != null and taskdescription != ''">
+                taskdescription = #{taskdescription},
+            </if>
+            <if test="taskcreatetime != null">
+                taskcreatetime = #{taskcreatetime},
+            </if>
+                taskupdatetime = #{taskupdatetime},
+                executetime = #{executetime},
+            <if test="status != null and status != ''">
+                status = #{status},
+            </if>
+            <if test="caseList != null and caseList != ''">
+                caseList = #{caseList},
+            </if>
+            <if test="proid != null">
+                proid = #{proid},
+            </if>
+            <if test="proname != null and proname != ''">
+                proname = #{proname},
+            </if>
+            <if test="isScheduled != null and isScheduled != ''">
+                isScheduled = #{isScheduled},
+            </if>
+            <if test="success != null and success != ''">
+                success = #{success},
+            </if>
+            <if test="fail != null and fail != ''">
+                fail = #{fail}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+</mapper>

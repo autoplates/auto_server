@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.auto.plate.mapper.MenuMapper">
+
+    <resultMap type="org.auto.plate.entity.Menu" id="MenuMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="url" column="url" jdbcType="VARCHAR"/>
+        <result property="component" column="component" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="iconcls" column="iconCls" jdbcType="VARCHAR"/>
+        <result property="keepalive" column="keepAlive" jdbcType="VARCHAR"/>
+        <result property="requireauth" column="requireAuth" jdbcType="INTEGER"/>
+        <result property="parentid" column="parentId" jdbcType="INTEGER"/>
+        <result property="enable" column="enable" jdbcType="INTEGER"/>
+        <result property="path" column="path" jdbcType="VARCHAR"/>
+    </resultMap>
+    <resultMap id="MenuMap2" type="org.auto.plate.entity.Menu" extends="MenuMap">
+        <collection property="children" ofType="org.auto.plate.entity.Menu">
+            <result property="id" column="id2" jdbcType="INTEGER"/>
+            <result property="url" column="url2" jdbcType="VARCHAR"/>
+            <result property="component" column="component2" jdbcType="VARCHAR"/>
+            <result property="name" column="name2" jdbcType="VARCHAR"/>
+            <result property="iconcls" column="iconCls2" jdbcType="VARCHAR"/>
+            <result property="keepalive" column="keepAlive2" jdbcType="VARCHAR"/>
+            <result property="requireauth" column="requireAuth2" jdbcType="INTEGER"/>
+            <result property="parentid" column="parentId2" jdbcType="INTEGER"/>
+            <result property="enable" column="enable2" jdbcType="INTEGER"/>
+            <result property="path" column="path2" jdbcType="VARCHAR"/>
+        </collection>
+    </resultMap>
+    <!--获取menulist-->
+    <select id="getMenuList" resultMap="MenuMap2">
+        SELECT m1.*, m2.id AS id2, m2.url AS url2, m2.component AS component2, m2.name AS name2, m2.iconCls AS iconCls2,
+        m2.keepAlive AS keepAlive2, m2.requireAuth AS requireAuth2, m2.parentId AS parentId2, m2.enable AS enable2,
+        m2.path AS path2 FROM menu m1 ,menu m2 WHERE m1.id = m2.parentId group by m1.id, m2.id
+    </select>
+    <!--查询单个-->
+    <select id="queryById" resultMap="MenuMap">
+        select
+          id, url, component, name, iconCls, keepAlive, requireAuth, parentId, enable, path
+        from auto.menu
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="MenuMap">
+        select
+          id, url, component, name, iconCls, keepAlive, requireAuth, parentId, enable, path
+        from auto.menu
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="MenuMap">
+        select
+          id, url, component, name, iconCls, keepAlive, requireAuth, parentId, enable, path
+        from auto.menu
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="url != null and url != ''">
+                and url = #{url}
+            </if>
+            <if test="component != null and component != ''">
+                and component = #{component}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="iconcls != null and iconcls != ''">
+                and iconCls = #{iconcls}
+            </if>
+            <if test="keepalive != null and keepalive != ''">
+                and keepAlive = #{keepalive}
+            </if>
+            <if test="requireauth != null">
+                and requireAuth = #{requireauth}
+            </if>
+            <if test="parentid != null">
+                and parentId = #{parentid}
+            </if>
+            <if test="enable != null">
+                and enable = #{enable}
+            </if>
+            <if test="path != null and path != ''">
+                and path = #{path}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into auto.menu(url, component, name, iconCls, keepAlive, requireAuth, parentId, enable, path)
+        values (#{url}, #{component}, #{name}, #{iconcls}, #{keepalive}, #{requireauth}, #{parentid}, #{enable}, #{path})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update auto.menu
+        <set>
+            <if test="url != null and url != ''">
+                url = #{url},
+            </if>
+            <if test="component != null and component != ''">
+                component = #{component},
+            </if>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="iconcls != null and iconcls != ''">
+                iconCls = #{iconcls},
+            </if>
+            <if test="keepalive != null and keepalive != ''">
+                keepAlive = #{keepalive},
+            </if>
+            <if test="requireauth != null">
+                requireAuth = #{requireauth},
+            </if>
+            <if test="parentid != null">
+                parentId = #{parentid},
+            </if>
+            <if test="enable != null">
+                enable = #{enable},
+            </if>
+            <if test="path != null and path != ''">
+                path = #{path},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from auto.menu where id = #{id}
+    </delete>
+
+</mapper>
