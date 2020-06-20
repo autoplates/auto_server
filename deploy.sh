@@ -1,3 +1,4 @@
+#!/bin/bash
 # 编译 + 部署 auto_server
 # 输入你的环境上的tomcat的全路径
 # export TOMCAT_APP_PATH=tomcat 在部署机器上的路径
